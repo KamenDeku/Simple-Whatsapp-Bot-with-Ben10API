@@ -1,0 +1,55 @@
+//Basic bot without apis
+
+import axios from 'axios';
+import pkg from 'whatsapp-web.js';
+const { Client, LocalAuth, MessageMedia } = pkg;
+import qrcode from 'qrcode-terminal';
+
+const client = new Client({
+  authStrategy: new LocalAuth(),
+});
+
+client.on("qr", (qr) => {
+  qrcode.generate(qr, { small: true });
+  console.log(
+    "--------------------------------" +
+    "\nQR code received, scan please!\n" +
+    "--------------------------------"
+  );
+});
+
+client.on("ready", () => {
+    console.log("Client is ready!");
+});
+
+client.on('message_create', (message) => {
+    if (message.body.toLowerCase() === "ping") {
+        message.reply("pong");
+    }
+     else if (/^httpc ?\d+$/i.test(message.body.normalize('NFD').replace(/[\u0300-\u036f]/g, ''))) {
+
+    const match = message.body.match(/\d+/);
+    if (match) {
+      const sticker = match[0];
+      const stickerUrl = `https://http.cat/images/${sticker}.jpg`;
+      console.log(stickerUrl);
+      axios.get(stickerUrl, {
+        responseType: 'arraybuffer',
+      })
+        .then((response) => {
+          const imageResponse = response.data;
+          const imageBuffer = Buffer.from(imageResponse, 'binary');
+          const imageBase64 = imageBuffer.toString('base64');
+          const imageMedia = new MessageMedia('image/jpeg', imageBase64, 'sticker.jpg');
+
+          return client.sendMessage(message.from, imageMedia, { sendMediaAsSticker: true });
+        })
+        .catch((error) => {
+          console.error('Error fetching the image:', error);
+          return client.sendMessage(message.from, 'El gato que estas buscando no existe :(.');
+        });
+    }
+  }
+});
+
+client.initialize();
