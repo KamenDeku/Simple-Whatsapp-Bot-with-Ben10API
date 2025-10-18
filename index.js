@@ -34,7 +34,8 @@ async function searchAlien(message, name) {
     const base64Image = Buffer.from(imageResponse.data, 'binary').toString('base64');
     const media = new MessageMedia('image/png', base64Image);
     
-    await message.reply(media, undefined, { caption: respuesta });
+    await message.reply(respuesta);
+    await message.reply(media, undefined, { sendMediaAsSticker: true });
   } catch (error) {
     message.reply('Alien not found');
   }
