@@ -29,8 +29,12 @@ async function searchAlien(message, name) {
     alien.abilities.forEach(ability => {
       respuesta += ` • ${ability}\n`;
     });
+
+    const imageResponse = await axios.get(alien.img, { responseType: 'arraybuffer' });
+    const base64Image = Buffer.from(imageResponse.data, 'binary').toString('base64');
+    const media = new MessageMedia('image/png', base64Image);
     
-    await message.reply(respuesta);
+    await message.reply(media, undefined, { caption: respuesta });
   } catch (error) {
     message.reply('Alien not found');
   }
