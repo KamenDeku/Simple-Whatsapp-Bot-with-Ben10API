@@ -54,13 +54,9 @@ async function searchAlien(message, name) {
   });
 
   client.on('message_create', async (message) => {
-    const msg = message.body.toLowerCase()
+    const msg = message.body.toLowerCase();
 
-    if (msg === "ping") {
-      message.reply("pong");
-    }
-    
-    else if (msg === "aliens") {
+    if (msg === "aliens") {
       try {
         const response = await axios.get(`${API_URL}/aliens`);
         let respuesta =
