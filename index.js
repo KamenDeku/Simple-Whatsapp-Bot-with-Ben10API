@@ -17,9 +17,14 @@ const client = new Client({
   authStrategy: new LocalAuth(),
 });
 
-function replyAndTrack(message, text) {
-  botMessages.push(text.toLowerCase());
-  return message.reply(text); 
+function replyAndTrack(message, content, chatId, options = {}) {
+  // Si el contenido es texto, lo agregamos al registro
+  if (typeof content === 'string') {
+    botMessages.push(content.toLowerCase());
+  }
+
+  // Enviamos el mensaje (texto o media)
+  return message.reply(content, chatId, options);
 }
 
 
