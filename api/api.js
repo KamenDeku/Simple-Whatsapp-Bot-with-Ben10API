@@ -1,20 +1,18 @@
+require('dotenv').config();
 const express = require('express');
-const dotenv = require('dotenv');
-const { getAllAliens, getAlienByName, getRandomAlien } = require('./controller/aliensController');
-const { login, verifyToken } = require('./controller/authController');
-const authToken = require('./middleware/auth');
+const { getAllAliens, getAlienByName, getRandomAlien } = require('./controller/aliensController.js');
 
-dotenv.config();
+const authRoutes = require('./auth/auth.routes.js');
+const auth = require('./auth/middleware/auth.Middleware.js');
 
 const app = express();
 app.use(express.json());
 
-app.post('/api/login', login);
-app.get('/api/verify', verifyToken);
+app.use('/api/auth', authRoutes);
 
-app.get('/api/aliens', authToken, getAllAliens);
-app.get('/api/aliens/random', authToken, getRandomAlien);
-app.get('/api/aliens/:name', authToken, getAlienByName);
+app.get('/api/aliens', auth, getAllAliens);
+app.get('/api/aliens/random', auth, getRandomAlien);
+app.get('/api/aliens/:name', auth, getAlienByName);
 
 app.get('/', (req, res) => {
   res.send('Ben 10 Aliens API is running');

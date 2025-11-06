@@ -1,4 +1,4 @@
-const aliens = require('../db');
+const aliens = require('../db/aliens');
 
 const getAllAliens = (req, res) => {
   res.json(aliens);
